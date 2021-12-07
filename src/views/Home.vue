@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
+    <!-- Зарегистрирован в main.js -->
     <ListComponent/>
     <SlotExample >
       <template v-slot:header>
