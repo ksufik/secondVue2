@@ -8,6 +8,27 @@
   </div>
 </template>
 
+<script>
+export default {
+  data () {
+    return {
+      links: ''
+    }
+  },
+  mounted () {
+    const links = document.querySelectorAll('a')
+    links.forEach(link => {
+      link.addEventListener('click', event => {
+        event.preventDefault()
+        history.pushState({}, '', link.href)
+        this.$root.$emit('router-go')
+      })
+    })
+  // window.addEventListener('hashchange', this.setPage);
+  }
+}
+</script>
+
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

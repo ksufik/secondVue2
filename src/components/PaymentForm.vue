@@ -1,15 +1,15 @@
 <template>
-    <div>
-        <!-- <input class="form__input" placeholder="Категория" type="text" v-model="category"> -->
-        <select class="form__input form__select" placeholder="Категория" name="" id="" v-model="category">
+    <div class="container">
+        <input class="form__input" placeholder="Категория" type="text" v-model="category">
+        <!-- <select class="form__input form__select" placeholder="Категория" name="" id="" v-model="category">
       <option
           v-for="(category, index) of getCategory"
           :value="category"
           :key="index"
       >{{ category }}</option>
-    </select>
+    </select> -->
         <input class="form__input" placeholder="Сумма" type="text" v-model.number="value">
-        <button class="form__btn" @click="addItem">
+        <button v-show="isNotEmpty" class="form__btn" @click="addItem">
             ADD
         </button>
     </div>
@@ -17,6 +17,7 @@
 
 <script>
 import { mapMutations, mapGetters, mapActions } from 'vuex'
+import { quickBTNs } from '@/assets/selects'
 export default {
   name: 'PaymentForm',
   data () {
@@ -32,7 +33,8 @@ export default {
     ...mapMutations([
       'setList',
       'addDataToList',
-      'setCategoryList'
+      'setCategoryList',
+      'general', ['setFormVisible']
     ]),
     formatDate (date = new Date()) {
       let dd = date.getDate()
@@ -58,7 +60,27 @@ export default {
         value: this.value
       }
       this.$store.commit('addDataToList', data)
+      // закрыть форму
+      this.setFormVisible(false)
+    },
+    getCoincidence () {
+      return this.list.some(el => el.category === this.$route.name)
+    },
+    setParams () {
+      if (this.getCoincidence()) {
+        this.date = this.formatDate()
+        this.category = this.$route.name
+        this.value = this.$route.params?.value
+        console.log(this.$route)
+      } else {
+        this.date = null
+        this.category = null
+        this.value = null
+      }
     }
+  },
+  mounted () {
+    this.setParams()
   },
   computed: {
     ...mapGetters([
@@ -66,6 +88,12 @@ export default {
     ]),
     getCategory () {
       return this.$store.getters.getCategoryList
+    },
+    list () {
+      return quickBTNs
+    },
+    isNotEmpty () {
+      return this.category && this.value
     }
   },
   // получение данных

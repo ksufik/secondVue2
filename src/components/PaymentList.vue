@@ -61,6 +61,7 @@ export default {
 .table{
   min-height: 300px;
   font-family: sans-serif;
+  text-transform: capitalize;
   &__container{
     display: flex;
     flex-wrap: wrap;
