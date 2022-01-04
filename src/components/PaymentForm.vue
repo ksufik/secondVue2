@@ -1,6 +1,7 @@
 <template>
     <div class="container">
-        <input class="form__input" placeholder="Категория" type="text" v-model="category">
+        <input class="form__input" placeholder="Дата" type="text" v-model="currentItem.date">
+        <input class="form__input" placeholder="Категория" type="text" v-model="currentItem.category">
         <!-- <select class="form__input form__select" placeholder="Категория" name="" id="" v-model="category">
       <option
           v-for="(category, index) of getCategory"
@@ -8,21 +9,20 @@
           :key="index"
       >{{ category }}</option>
     </select> -->
-        <input class="form__input" placeholder="Сумма" type="text" v-model.number="value">
-        <button v-show="isNotEmpty" class="form__btn" @click="addItem">
-            ADD
-        </button>
+        <input class="form__input" placeholder="Сумма" type="text" v-model.number="currentItem.value">
+        <button v-if="!isEdited" class="form__btn" @click="addItem">ADD</button>
+        <button v-else class="form__btn" @click="editHandler">EDIT</button>
     </div>
 </template>
 
 <script>
-import { mapMutations, mapGetters, mapActions } from 'vuex'
+import { mapMutations, mapGetters, mapActions, mapState } from 'vuex'
 import { quickBTNs } from '@/assets/selects'
 export default {
   name: 'PaymentForm',
   data () {
     return {
-      category: '',
+      category: {},
       value: null
     }
   },
@@ -33,9 +33,10 @@ export default {
     ...mapMutations([
       'setList',
       'addDataToList',
-      'setCategoryList',
-      'general', ['setFormVisible']
+      'setCategoryList'
+      // 'general', ['setFormVisible']
     ]),
+    ...mapMutations('general', ['setFormVisible']),
     formatDate (date = new Date()) {
       let dd = date.getDate()
       if (dd < 10) {
@@ -54,35 +55,49 @@ export default {
       return dd + '.' + mm + '.20' + yy
     },
     addItem () {
+      const { category, date, value } = this.currentItem
       const data = {
-        date: this.formatDate(),
-        category: this.category,
-        value: this.value
+        id: this.$store.state.list.length + 1,
+        date: date || this.formatDate(),
+        category: category,
+        value: value
       }
       this.$store.commit('addDataToList', data)
       // закрыть форму
       this.setFormVisible(false)
     },
     getCoincidence () {
-      return this.list.some(el => el.category === this.$route.name)
+      // return this.list.some(el => el.category === this.$route.name)
+      return true
     },
     setParams () {
       if (this.getCoincidence()) {
         this.date = this.formatDate()
         this.category = this.$route.name
         this.value = this.$route.params?.value
-        console.log(this.$route)
       } else {
         this.date = null
         this.category = null
         this.value = null
       }
+    },
+    editHandler () {
+      this.setFormVisible(false)
+      // this.$store.commit('setFormVisible', false)
+      // this.$router.push({ name: 'Home' })
     }
   },
   mounted () {
     this.setParams()
+    if (this.isEdited) {
+      const { date, category, value } = this.currentItem
+      this.date = date
+      this.value = value
+      this.category = category
+    }
   },
   computed: {
+    ...mapState(['list', 'currentItem']),
     ...mapGetters([
       'getCategoryList'
     ]),
@@ -92,8 +107,11 @@ export default {
     list () {
       return quickBTNs
     },
-    isNotEmpty () {
-      return this.category && this.value
+    // isNotEmpty () {
+    //   return this.category && this.value
+    // },
+    isEdited () {
+      return this.$route.name === 'edit'
     }
   },
   // получение данных

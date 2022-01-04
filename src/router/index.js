@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import List from '../components/List.vue'
 import categories from '@/router/categories.js'
 // import List from '../components/List.vue'
 Vue.use(VueRouter)
@@ -20,6 +21,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   ...categories,
+  {
+    path: '/edit',
+    name: 'edit',
+    component: List
+  },
   {
     path: '/404',
     name: '404',

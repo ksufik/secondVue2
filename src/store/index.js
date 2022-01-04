@@ -7,7 +7,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    list: []
+    list: [],
+    currentItem: {}
   },
   mutations: {
     // работает
@@ -15,7 +16,10 @@ export default new Vuex.Store({
       state.list = paymentsList
     },
     addDataToList (state, payment) {
-      state.list.unshift(payment)
+      state.list.push(payment)
+    },
+    setCurrentItem (state, item) {
+      Vue.set(state, 'currentItem', item)
     }
   },
   getters: {
@@ -33,31 +37,37 @@ export default new Vuex.Store({
       setTimeout(() => {
         const initialPaymentsList = [
           {
+            id: 1,
             date: '28.03.2020',
             category: 'Food',
             value: 169
           },
           {
+            id: 2,
             date: '24.03.2020',
             category: 'Transport',
             value: 360
           },
           {
+            id: 3,
             date: '24.03.2020',
             category: 'Food',
             value: 532
           },
           {
+            id: 4,
             date: '20.03.2020',
             category: 'Food',
             value: 169
           },
           {
+            id: 5,
             date: '19.03.2020',
             category: 'Navigation',
             value: 50
           },
           {
+            id: 6,
             date: '12.03.2020',
             category: 'Sport',
             value: 450
@@ -67,6 +77,10 @@ export default new Vuex.Store({
         // this.state = initialPaymentsList;
         commit('setList', initialPaymentsList)
       })
+    },
+    removeItem ({ commit, state }, item) {
+      const list = state.list.filter(el => el.id !== item.id)
+      commit('setList', list)
     }
     // fetchCategoryListData({ commit }) {
     //   setTimeout(() => {

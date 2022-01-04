@@ -5,11 +5,7 @@ export default {
   },
   mutations: {
     setFormVisible (state, flag) {
-      if (flag !== undefined) {
-        state.formVisible = flag
-      } else {
-        state.formVisible = !state.formVisible
-      }
+      flag !== undefined ? state.formVisible = flag : state.formVisible = !state.formVisible
     }
   },
   namespaced: true
