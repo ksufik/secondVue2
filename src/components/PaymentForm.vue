@@ -10,8 +10,8 @@
       >{{ category }}</option>
     </select> -->
         <input class="form__input" placeholder="Сумма" type="text" v-model.number="currentItem.value">
-        <button v-if="!isEdited" class="form__btn" @click="addItem">ADD</button>
-        <button v-else class="form__btn" @click="editHandler">EDIT</button>
+        <v-btn v-if="!isEdited && isNotEmpty" class="form__btn" @click="addItem">ADD</v-btn>
+        <v-btn v-if="isEdited" class="form__btn" @click="editHandler">EDIT</v-btn>
     </div>
 </template>
 
@@ -107,9 +107,9 @@ export default {
     list () {
       return quickBTNs
     },
-    // isNotEmpty () {
-    //   return this.category && this.value
-    // },
+    isNotEmpty () {
+      return this.category && this.value
+    },
     isEdited () {
       return this.$route.name === 'edit'
     }

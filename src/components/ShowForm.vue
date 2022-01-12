@@ -1,8 +1,8 @@
 <template>
 <!-- @click="show(isOn)"> -->
-    <button class="show_btn form__btn"
+    <v-btn class="show_btn form__btn"
     @click="changeHandler">
-    ADD NEW COST</button>
+    ADD NEW COST</v-btn>
 </template>
 
 <script>

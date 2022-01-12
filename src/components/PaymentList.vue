@@ -1,9 +1,126 @@
 <template>
   <div>
     <!-- <div v-for="item in list" :key="item.value">{{item}}</div> -->
-    <!-- summ = {{getFV}} -->
-    <!-- list: {{getList}} -->
-    <div class="table">
+    <v-data-table
+      :headers="headers"
+      :items="hard_list"
+      :items-per-page="5"
+      class="table">
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title>Payments List</v-toolbar-title>
+          <v-divider
+            class="mx-4"
+            inset
+            vertical
+          ></v-divider>
+          <v-spacer></v-spacer>
+          <v-dialog
+            v-model="dialog"
+            max-width="500px"
+          >
+          <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+              >
+                New cost
+              </v-btn>
+            </template>
+            <!-- форма для добавления платежа -->
+            <v-card>
+              <v-card-title>
+                <!-- заголовок -->
+                <span>Добавление нового платежа</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <!-- инпут для даты -->
+                    <v-col
+                    >
+                      <v-text-field
+                        v-model="editedItem.date"
+                        label="date"
+                        prepend-icon="mdi-calendar"
+                      ></v-text-field>
+                    </v-col>
+                    <!-- инпут для категории -->
+                    <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                    >
+                      <v-text-field
+                        v-model="editedItem.category"
+                        label="category"
+                      ></v-text-field>
+                    </v-col>
+                    <!-- инпут для стоимости -->
+                    <v-col
+                      cols="5"
+                      sm="4"
+                      md="3"
+                    >
+                    <v-text-field
+                        v-model="editedItem.value"
+                        label="value"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  @click="close"
+                >
+                  Cancel
+                </v-btn>
+                <v-btn
+                  @click="save"
+                >
+                  Save
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+          <v-dialog
+          persistent
+          v-model="dialogDelete"
+          max-width="500px">
+            <v-card>
+              <v-card-title>Are you sure you want to delete this item?</v-card-title>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn @click="closeDelete">Cancel</v-btn>
+                <v-btn @click="deleteItemConfirm">OK</v-btn>
+                <v-spacer></v-spacer>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+        </v-toolbar>
+      </template>
+
+      <template v-slot:item.actions="{ item }">
+        <v-icon
+          small
+          class="mr-2"
+          @click="editItem(item)"
+        >
+          mdi-pencil
+        </v-icon>
+        <v-icon
+          small
+          @click="deleteItem(item)"
+        >
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
+    <!-- <div class="table">
       <div class="table__row">
         <div class="table__col table__col_dark">№</div>
         <div class="table__col table__col_dark">Date</div>
@@ -31,33 +148,117 @@
           <hr>
         </div>
       </template>
-      <!-- <div v-for="(item, index) in getList" :key="index" >
-        <div  class="table__row" >
-          <div class="table__col">{{ index+1 }}</div>
-          <div class="table__col">{{ item.date }}</div>
-          <div class="table__col">{{ item.category }}</div>
-          <div class="table__col">{{ item.value }}</div>
-          <div class="table__col"></div>
-        </div>
-      </div> -->
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-import ModalWindow from '@/components/ModalWindow.vue'
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+// import ModalWindow from '@/components/ModalWindow.vue'
+// import { mapGetters, mapMutations, mapActions, mapState } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'PaymentList',
   components: {
-    ModalWindow
+  //  ModalWindow
   },
   data () {
     return {
-      M_Window: true,
-      M_Window_Settings: {},
-      activeID: null
+      // не получилось сделать через store, ругался на промис. Как надобыло сделать?
+      hard_list: [
+        {
+          id: 1,
+          date: '28.03.2020',
+          category: 'Food',
+          value: 169
+        },
+        {
+          id: 2,
+          date: '24.03.2020',
+          category: 'Transport',
+          value: 360
+        },
+        {
+          id: 3,
+          date: '24.03.2020',
+          category: 'Food',
+          value: 532
+        },
+        {
+          id: 4,
+          date: '20.03.2020',
+          category: 'Food',
+          value: 169
+        },
+        {
+          id: 5,
+          date: '19.03.2020',
+          category: 'Navigation',
+          value: 50
+        },
+        {
+          id: 6,
+          date: '12.03.2020',
+          category: 'Sport',
+          value: 450
+        },
+        {
+          id: 7,
+          date: '10.12.2020',
+          category: 'Entertainment',
+          value: 5650
+        },
+        {
+          id: 8,
+          date: '04.01.2020',
+          category: 'Food',
+          value: 300
+        },
+        {
+          id: 9,
+          date: '24.09.2020',
+          category: 'Sport',
+          value: 700
+        },
+        {
+          id: 10,
+          date: '21.11.2020',
+          category: 'Entertainment',
+          value: 1250
+        },
+        {
+          id: 11,
+          date: '08.05.2020',
+          category: 'Navigation',
+          value: 200
+        }
+      ],
+      headers: [
+        {
+          text: 'id',
+          align: 'start',
+          sortable: false,
+          value: 'id'
+        },
+        { text: 'Date', value: 'date' },
+        { text: 'Category', value: 'category' },
+        { text: 'Value', value: 'value' },
+        { text: 'Actions', value: 'actions', sortable: false }
+      ],
+      editedItem: {
+      },
+      editedIndex: -1,
+      dialog: false,
+      activeID: null,
+      dialogDelete: false
+    }
+  },
+  watch: {
+    dialog (val) {
+      val || this.close()
+    },
+    dialogDelete (val) {
+      val || this.closeDelete()
     }
   },
   mounted () {
@@ -66,39 +267,71 @@ export default {
   },
   methods:
   {
-    ...mapActions([
-      'fetchData'
-    ]),
-    ...mapMutations([
-      'setList'
-    ]),
+    // ...mapActions([
+    //   'fetchData'
+    // ]),
+    // ...mapMutations([
+    //   'setList'
+    // ]),
     onShown (params) {
-      // this.M_Window = settings.name
-      // this.M_Window_Settings = settings
       this.activeID = params.name.id
     },
     onHide () {
-      // this.M_Window = ''
-      // this.M_Window_Settings = {}
       this.activeID = null
+    },
+    editItem (item) {
+      this.editedIndex = this.hard_list.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+    },
+    deleteItem (item) {
+      this.editedIndex = this.hard_list.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialogDelete = true
+    },
+    save () {
+      this.editedItem.id = this.hard_list.length + 1
+      if (this.editedIndex > -1) {
+        Object.assign(this.hard_list[this.editedIndex], this.editedItem)
+      } else {
+        this.hard_list.push(this.editedItem)
+        console.log(this.hard_list)
+      }
+      this.close()
+    },
+    close () {
+      this.dialog = false
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
+    },
+    deleteItemConfirm () {
+      this.hard_list.splice(this.editedIndex, 1)
+      this.closeDelete()
+    },
+    closeDelete () {
+      this.dialogDelete = false
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
     }
   },
   computed: {
-    ...mapGetters([
-      'getList',
-      'getFullValue'
-    ]),
-    // getFV () {
-    //   return this.$store.getters.getFullValue
-    // },
-    getList () {
-      return this.$store.getters.getList
-    }
-  },
-  // получение данных
-  created () {
-    this.$store.commit('setList', this.fetchData())
+    // ...mapGetters([
+    //   'getList',
+    //   'getFullValue'
+    // ]),
+    ...mapState(['list'])
+    // getList () {
+    //   return this.$store.getters.getList
+    // }
   }
+  // получение данных
+  // created () {
+  //   this.$store.commit('setList', this.fetchData())
+  // }
 }
 </script>
 

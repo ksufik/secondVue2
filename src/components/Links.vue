@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="links">
+    <v-app-bar class="links">
       <div class="links__container">
-        <div v-for="item in listBTN" :key="item.category" class="form__btn" @click="linkHandler(item)">
+        <v-btn v-for="item in listBTN" :key="item.category" class="form__btn" @click="linkHandler(item)">
           {{item.category}}: {{item.params.value}}
-        </div>
+        </v-btn>
       </div>
-    </div>
+    </v-app-bar>
   </div>
 </template>
 

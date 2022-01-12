@@ -8,6 +8,7 @@ export default {
     },
     addCategoryToList (state, category) {
       state.categoryList.push(category)
+      console.log(state.categoryList)
     }
   },
   getters: {

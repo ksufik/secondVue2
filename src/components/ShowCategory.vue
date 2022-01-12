@@ -1,7 +1,7 @@
 <template>
-    <button class="show_btn form__btn"
+    <v-btn class="show_btn form__btn"
     @click="show(isOn)">
-    ADD NEW CATEGORY</button>
+    ADD NEW CATEGORY</v-btn>
 </template>
 
 <script>
